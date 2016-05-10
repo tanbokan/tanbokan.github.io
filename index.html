@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://yoursite.com/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hexo">
+<meta name="twitter:description">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Zoeken"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-rethinkdb-architecture-2" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/05/10/rethinkdb-architecture-2/" class="article-date">
+  <time datetime="2016-05-10T14:29:55.000Z" itemprop="datePublished">2016-05-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/05/10/rethinkdb-architecture-2/">rethinkdb architecture 2</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Sharding-and-replication"><a href="#Sharding-and-replication" class="headerlink" title="Sharding and replication"></a>Sharding and replication</h2><h3 id="rethinkdb如何对数据进行分片？"><a href="#rethinkdb如何对数据进行分片？" class="headerlink" title="rethinkdb如何对数据进行分片？"></a>rethinkdb如何对数据进行分片？</h3><p>rethinkdb使用表主键作为输入参数的范围切分算法对数据进行分片，当用户声明想对一个表切分成一定数量的分片，系统会根据这个表的统计信息找到最优的分裂点把表平均切分。所有的划分都是基于表的primary key来完成，不能做到基于其他属性的（在rethinkdb中 ，primary key和shard key实际上是一回事）。</p>
+<p>举个例子，如果一个表包含一千个json文档，它的primary key是均匀分布，字典序，大写的字符串，用户声明他们需要2个分片，rethinkdb将会挑选分裂点字母 ‘M’ 去切分这个表。每个文档如果primary key 小于等于 ‘M’将会进入第一个分片，如果primary key 大于 ‘M’ 将会进入第二个分片.分裂点的选择将会尽量让每个分片包含500个key，并且分片会自动分布到集群中。</p>
+<p>即使primary key包含不平均分布的数据(比如人名，有一些名字出现的次数比其他名字更多)，系统会挑选一个恰当的分裂点去保证每个分片有大致相同数量的的文档。</p>
+<p>当表创建分片之后分裂点不会自动修改，这意味着如果primary key变得分布不均匀，分片可能变的不均衡。不过，用户可以在需要的时候手动调整分片，还可以重新配置表的分片和副本集的设置，但用户不能手工设置分裂点</p>
+<p>这种内部的实现比常见的一致性hash实现更困难，但是它有重大的优势因为它可以更高效的实现范围查询</p>
+<h3 id="如何治理集群中的分片和冗余的位置？"><a href="#如何治理集群中的分片和冗余的位置？" class="headerlink" title="如何治理集群中的分片和冗余的位置？"></a>如何治理集群中的分片和冗余的位置？</h3><p>分片和冗余可以通过修改table进行配置，可以让你简单的指明一个数据库下每个表的分片数和冗余数。用户不需要手工的关联表和服务器。rethinkdb使用一组试探的方法去尝试满足最佳的配置: 为新的冗余从可用的服务上拷贝数据，平均的分配数据冗余到整个集群，尽量平均的分配负载等</p>
+<p>对于更细力度大机制，冗余可以通过服务的标签进行分配。每个服务可以被分配一个或者多个标签，每个表可以指定某个tag的冗余数。举个例子，如果你有6个服务器，你可能分配2个us_west标签，2个us_east标签，2个london标签，而且分配四台美国的服务器us标签。表可以通过reconfigure为每个replica组进行设置</p>
+<pre><code>r.table(&apos;a&apos;).reconfigure(shards=2, replicas={&apos;us_east&apos;:2, &apos;us_west&apos;:2,&apos;london&apos;:2}, primary_replica_tag=&apos;us_east&apos;)
+r.table(&apos;b&apos;).reconfigure(shards=2, replicas={&apos;us&apos;:2, &apos;london&apos;:1},primary_replica_tag=&apos;london&apos;)
+</code></pre><p>在第二个例子里，这us组里的2个冗余可能在任意这四台美国服务器上。<br>需要注意的是服务标签不能通过rethinkdb的web管理界面进行配置</p>
+<p>rethinkdb持有一个内部的目录跟踪当前的集群状态:多少服务器可以被访问，每台机器数据存储哪些数据等。这个数据结构跟踪集群变化并自动更新。举个例子，如果一个机器因为电源故障挂了，这个目录会被更新代表发生变化了</p>
+<h3 id="如何支持多机房工作？"><a href="#如何支持多机房工作？" class="headerlink" title="如何支持多机房工作？"></a>如何支持多机房工作？</h3><p>从rethinkdb 1.16开始，早期的”数据中心”的概念已经被之前提到的服务标签替换了。在给定的数据中心的服务器可以被打上一个标签，比如us_east或us_west, 一个表可以在指定特定标签的服务上进行冗余设置</p>
+<p>rethinkdb在一个机房和跨机房中使用一样的协议进行通讯，因为架构师是 immediately consistent 并且不需要在单个文档的读写上不需要quorums, 在跨机房场景下 类似dynamo系统的延迟的问题上通常在rethinkdb上没有出现</p>
+<h3 id="在没有用户的请求下rethinkdb会自动重新切分数据库吗？"><a href="#在没有用户的请求下rethinkdb会自动重新切分数据库吗？" class="headerlink" title="在没有用户的请求下rethinkdb会自动重新切分数据库吗？"></a>在没有用户的请求下rethinkdb会自动重新切分数据库吗？</h3><p>不会的，这个集群系统设计考虑了三个重要原则：</p>
+<ol>
+<li>通常的操作比如伸缩，重新平衡切片，增加减少冗余数应该和容易被执行通过一个按钮点击</li>
+<li>在一些重要的情况下，系统应该给管理元微调的能力，比如指定primary和secondary replica到指定的集群服务器上</li>
+<li>集群的信息和集群所有的操作应该是编程可见的.</li>
+</ol>
+<p>我们认为在集群上执行自动的维护操作(比如添加分片)是一个更高层面的组件，它的关键是需要先实现一个很好的底层组件。所以这个集群系统由下面三层组成:</p>
+<ol>
+<li>第一层实现了分布式基础组件:放置拷贝数据在指定的服务器上，路由查询等</li>
+<li>第二层构建在第一层之上并且实现了多种自动化机制(自动决定如何分裂，在哪放置复制的数据，自动挑选最佳primary replica)。</li>
+<li>第三层构建在前两层之上，并且提供用户命令行和web工具去操作集群</li>
+</ol>
+<p>没有用户的请求自动调用这些功能是下一层要哪个行做的。目前用户可以控制系统通过webui，手工操作命令行，编写脚本去执行命令行工具让操作服务自动化</p>
+<p>我们正在探索最佳实践区决定是否可能构建一个通用的自动化层，通过用户指定的规则来自动控制(比如当分片平衡降到一定的阈值的时候需要重新切分)</p>
+<h2 id="CAP-theorem"><a href="#CAP-theorem" class="headerlink" title="CAP theorem"></a>CAP theorem</h2><h3 id="rethinkdb是immediately还是eventually-一致性？"><a href="#rethinkdb是immediately还是eventually-一致性？" class="headerlink" title="rethinkdb是immediately还是eventually 一致性？"></a>rethinkdb是immediately还是eventually 一致性？</h3><p>在rethinkdb的每个分片都会分配一台授权的primary replica。任何分片的key的所有的读写操作都会路由到各自的primary分片上，在那里他们会有序的？。数据总是始终保持一致，并且没有冲突，一个在写ack回来之后的读操作总是能保证读到最新的写入。然后 读和写在主replica挂的时候都不能保证成功。</p>
+<p>rethinkdb支持up-to-date和out-of-date 读。默认的所有的读都执行的 up-to-date，这意味着每个分片的读区都会路由到主replica被顺序执行。在默认的模式下，客户端总是看到最新的，一致的， artifact-free的数据视图</p>
+<p>程序员也可以标记一个读操作是out-of-date。在这个末实现，读区不是必需路由到primary分片，而是可能会路由到最近的分片上。out-of-date查询拥有更低的延迟和更强的可用性担保，但是不一定会返回客户端数据最新的版本</p>
+<h3 id="rethinkdb是如何权衡cap理论？"><a href="#rethinkdb是如何权衡cap理论？" class="headerlink" title="rethinkdb是如何权衡cap理论？"></a>rethinkdb是如何权衡cap理论？</h3><p>cap理论暴露的最基本的权衡:当网络分区饰，系统保持可用性还是数据一致性?(rethinkdb选择了数据一致性)</p>
+<p>dynamo类似的系统比如cassandra和ciak选择了强可用性。在这些系统中如果出现网络分区，客户端可以往网络分区的两边都写入相同的key。作为交换写的可用性，在这之上的应用必须处理多重复杂问题，比如clock skew， conflict resolution code， 冲突的修复操作，高并发下性能问题，基于quorums的latency问题</p>
+<p>有权威的系统，比如rethinkdb和mongoldb选择了数据一致性。应用构建在这之上会更简单，因为所有的数据一致性问题都没有。代价是应用可能会偶尔出现不可用的问题</p>
+<p>在rethinkdb里有一个网络分区的问题，客户端的行为取决于位于网络分裂的那边。如果一个客户端的尝试到达具有较多的选举的replica分片里，客户端会尝试并继续没有任何问题的操作操作。如果客户端尝试到达了在小于等于一半选举的replica里，客户端up-to-date的查询和卸乳都会遇到因为可用性而失败。举个例子，如果客户端正在跑up-to-date的范围查询跨越多个分区，所有的主分区必须和客户端在相同的网络分区内，否则客户端会遇到可用性失效。</p>
+<p>如果程序员标记一个读操作为out-of-date，rethinkdb会路由查询到最近的可用副本而不是主副本。在这种情况下客户端会看到在跟它一样的网络分区的副本的数据。这通常是没有问题的在报表，分析，缓存等不必需要绝对的最新信息的方案里</p>
+<h3 id="集群的配置是如何传播的？"><a href="#集群的配置是如何传播的？" class="headerlink" title="集群的配置是如何传播的？"></a>集群的配置是如何传播的？</h3><p>更新集群的状态是出人意外的困难在分布式系统里。在不同给定的任意一个点，冲突的配置可鞥被网络分裂不同的两边选择，不同的配置可以不同的节点在不确定的时间里。</p>
+<p>rethinkdb大部分情况下使用raft算法去存储和传播集群的配置，虽然有一些场景使用了它使用了半格，内部时间戳版本。这种架构证明具有足够的精确性解决上述的所有问题</p>
+<h2 id="Indexing"><a href="#Indexing" class="headerlink" title="Indexing"></a>Indexing</h2><h3 id="rethinkdb如何索引数据？"><a href="#rethinkdb如何索引数据？" class="headerlink" title="rethinkdb如何索引数据？"></a>rethinkdb如何索引数据？</h3><p>当用户创建一个表的时候，他们有选项指定哪个属性应该是primary key(如果primary key没有指定，默认是”id”).当用户插入一个文档到表中，如果文档包含primary key，则value会用于索引文档，否则，一个随机的唯一id会被索引自动产生</p>
+<p>每个文档的主键被rethinkdb使用进行分区的放置，一个分区内的索引使用B-Tree结构存储。通过主键查询文档是极为高效的，因为查询会立刻路由到对应的分区上，同时文档会在B-Tree上进行查询</p>
+<h3 id="rethinkdb支持二级索引和复合索引吗？"><a href="#rethinkdb支持二级索引和复合索引吗？" class="headerlink" title="rethinkdb支持二级索引和复合索引吗？"></a>rethinkdb支持二级索引和复合索引吗？</h3><p>rethinkdb支持二级和复合索引，同时索引支持计算任意意表达式。可以参考如何创建二级索引的API here.</p>
+<h2 id="Availability-and-failover"><a href="#Availability-and-failover" class="headerlink" title="Availability and failover"></a>Availability and failover</h2><h3 id="当一个server不可用的时候会出现什么？"><a href="#当一个server不可用的时候会出现什么？" class="headerlink" title="当一个server不可用的时候会出现什么？"></a>当一个server不可用的时候会出现什么？</h3><p>如果一个集群至少有3个节点，在大部分情况下rethinkdb会执行自动故障转移保持表的可用性</p>
+<p>如果一个表的主副本失效了，只要每个分片的副本有超过一半的副本可用，那么其中一个副本会成为新的主副本</p>
+<p>如果某个切片有超过一半的副本不可用(包括2个server的集群挂了1台)，这个集群将变成需要通过reconfigure的emergency repair 来进行修复<br>更多的细节可以看 Failover.</p>
+<h3 id="分片和副本是如何影响可用性和性能的？"><a href="#分片和副本是如何影响可用性和性能的？" class="headerlink" title="分片和副本是如何影响可用性和性能的？"></a>分片和副本是如何影响可用性和性能的？</h3><p>rethinkdb的用户通过增加和减小副本的数量来保持可用性。在大部分情况下，副本的进程不会对实时的系统产生有太多的影响</p>
+<p>rethinkdb 可能不一定会保持可用性如果用户修改分片的数量，在很多情况下，会保持可用性，但是不一定会保。我们在探索不同的解决方案来去掉这个限制</p>
+<h2 id="Query-execution"><a href="#Query-execution" class="headerlink" title="Query execution"></a>Query execution</h2><h3 id="rethinkdb如何执行查询"><a href="#rethinkdb如何执行查询" class="headerlink" title="rethinkdb如何执行查询?"></a>rethinkdb如何执行查询?</h3><p>当一个集群的节点收到来自客户端的查询时，会用下面的方法进行评估</p>
+<p>首先，查询会转换成一由内部逻辑操作的执行计划栈。这个操作栈完整的描述了query的高效执行的数据结构。这个栈的底部节点描述了处理数据的访问 － 它可以是一个单文档查询，一个针对索引的短范围扫描或者一个全表扫描。顶部节点通过执行数据的变幻－映射value，执行缩减，分组等。节点可以很简单的被推导(返回一组文档子集) 或者整个栈对应的子查询</p>
+<p>每个在栈里的节点有一些方法定义在上面。有三个重要的方法定义 如何执行一组自查询在集群的每个机器上，如何去合并数据从多台机器上到统一的结果集里，如何进一步把数据通过小块流向节点</p>
+<p>作为客户端尝试从服务器流式的拉数据，这些栈会传输到集群每个相关节点，通过并行的方式，每个server开始计算栈的顶端节点。每个server对应栈的顶端从下面的节点抓取第一个数据块，并且在上面进行转换。这个过程递归的进行直到足够的数据被收集后会发送第一个数据块给客户端。每个server产生的数据会合并成一个结果集，并且转发给客户端，客户端持从这个过程从服务器上请求更多的数据<br>两个重要的执行引擎的特性是每个查询都会完全在集群里并行化，查询会延迟评估。比如如果客户端只请求一个文档，rethinkdb会尝试做足够的工作来返回文档，从整体上看不会处理每个分片。这允许更大和更复杂的查询更有效的执行</p>
+<p>完整的查询执行过程是相当复杂和精细的。举个例子，一些操作不能被并行化，一些查询不能被延迟执行(隐含在运行时使用内存)，一些操作的实现可以被明显改进。我们在添加工具帮助可视化来实现让用户更好的理解查询执行，但是当前最好的方法是问我们或者看代码</p>
+<h3 id="原子性的模型是如何工作的？"><a href="#原子性的模型是如何工作的？" class="headerlink" title="原子性的模型是如何工作的？"></a>原子性的模型是如何工作的？</h3><p>写的原子性支持基础的单个文档－更新一个json文档可以保证是原子的。rethinkdb和其他NOSQL系统不同的，一次原子的文档更新可以包含一组操作集。比如用户可能希望更新属性A为 属性B和C的sum值，增加属性D的值，添加一个元素到属性E的数组里。所有的这些操作都能被一个更新操作原子的执行。</p>
+<p>然后，rethinkdb一开始做了一些限制关于哪个操作可以被原子的执行。操作不能被证明是确定的则不能被原子的方式更新。目前在js代码里执行 获取随机值，并且value值作为子查询的结果(比如添加一个属性的值到另外一个属性的值上)，是不能原子的执行的。如果一个更新或替换查询不能被原子的执行，rethinkdb默认会抛异常。用户会选择设置flag在客户端drive中update操作中用非原子的方式。注意非原子的操作只能当他们被调用函数并传给update或replace的时候才会被发现.非原子的insert操作不会抛出异常。<br>此外，像大部分nosql系统，rethinkdb不支持原子的更新多个文档</p>
+<h3 id="并发的查询如何处理的？"><a href="#并发的查询如何处理的？" class="headerlink" title="并发的查询如何处理的？"></a>并发的查询如何处理的？</h3><p>为了有效的执行并发的query计划，rethinkdb实现了block-level的MVCC。当一个写操作发生<br>时有一个读操作正在进行，rethinkdb会做一个B-Tree的快照为每个相关的分片，为了执行读和写操作是并发的临时的维护不同版本的block。从这点来看，构建在这套lock-free的rethinkdb之上的应用，可以执行小时级别的查询分析在一个实时的系统中，同时不会阻塞任何事实的读写。</p>
+<p>rethinkdb采用独占的block-level的锁当多个写操作在B-Tree中靠的比较近。如果一个竞争的块在内存里被缓存，这个锁会非常短。如果这个block需要从磁盘加载，这个锁会稍长。这个特点并不代表性能问题，因为在B-Tree之上，所有经常被访问的block都会被缓存，所以大部分情况下写操作执行时本质上还是lock-free</p>
+<h2 id="Data-storage"><a href="#Data-storage" class="headerlink" title="Data storage"></a>Data storage</h2><h3 id="数据如何存储在磁盘上？"><a href="#数据如何存储在磁盘上？" class="headerlink" title="数据如何存储在磁盘上？"></a>数据如何存储在磁盘上？</h3><p>数据被组织成B-Tree，并且通过log-structured存储引擎存储在磁盘上，这些灵感来自BTRFS.<br>这个方案相比其他的可能的存储引擎有一些优势，比如增量的，完全并发的垃圾压缩，低CPU开销和有效的多核操作，一些SSD优化，当电源故障立即恢复，当故障时保证完全的数据一致性，支持MVCC<br>这个存储引擎可以同时使用在定制的,明确B-Tree的缓存引擎里，允许文件的大小比可用内存的大小多很多数量级。rethinkdb可工作在10GB内存的和1TB的数据上</p>
+<h3 id="支持哪种文件系统？"><a href="#支持哪种文件系统？" class="headerlink" title="支持哪种文件系统？"></a>支持哪种文件系统？</h3><p>rethinkdb支持大部分常用的文件系统。它为了更高效可以支持direct io，但是默认是不开启的</p>
+<h3 id="如何备份我的集群？"><a href="#如何备份我的集群？" class="headerlink" title="如何备份我的集群？"></a>如何备份我的集群？</h3><p>rethinkdb 通过一些简单的工具去做一个正在运行的集群热备份。更多细节参考 backup instructions</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2016/05/10/rethinkdb-architecture-2/" data-id="cio1jmj0q0000872xhp2f3tls" class="article-share-link">Delen</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nosql/">nosql</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rethinkdb/">rethinkdb</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-rethinkdb-architecture" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/05/10/rethinkdb-architecture/" class="article-date">
+  <time datetime="2016-05-10T14:27:51.000Z" itemprop="datePublished">2016-05-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/05/10/rethinkdb-architecture/">rethinkdb architecture</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2016/05/10/rethinkdb-architecture/" data-id="cio1jmj0v0001872xe47k8fui" class="article-share-link">Delen</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Labels</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/nosql/">nosql</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rethinkdb/">rethinkdb</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/nosql/" style="font-size: 10px;">nosql</a> <a href="/tags/rethinkdb/" style="font-size: 10px;">rethinkdb</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archieven</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recente berichten</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/05/10/rethinkdb-architecture-2/">rethinkdb architecture 2</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/10/rethinkdb-architecture/">rethinkdb architecture</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>
