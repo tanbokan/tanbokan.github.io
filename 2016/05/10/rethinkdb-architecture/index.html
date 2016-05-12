@@ -11,7 +11,7 @@
 <meta property="og:url" content="http://yoursite.com/2016/05/10/rethinkdb-architecture/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="Sharding and replicationrethinkdb如何对数据进行分片？rethinkdb使用表主键作为输入参数的范围切分算法对数据进行分片，当用户声明想对一个表切分成一定数量的分片，系统会根据这个表的统计信息找到最优的分裂点把表平均切分。所有的划分都是基于表的primary key来完成，不能做到基于其他属性的（在rethinkdb中 ，primary key和shard key实">
-<meta property="og:updated_time" content="2016-05-12T16:04:39.000Z">
+<meta property="og:updated_time" content="2016-05-12T16:08:39.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="rethinkdb architecture">
 <meta name="twitter:description" content="Sharding and replicationrethinkdb如何对数据进行分片？rethinkdb使用表主键作为输入参数的范围切分算法对数据进行分片，当用户声明想对一个表切分成一定数量的分片，系统会根据这个表的统计信息找到最优的分裂点把表平均切分。所有的划分都是基于表的primary key来完成，不能做到基于其他属性的（在rethinkdb中 ，primary key和shard key实">
@@ -119,11 +119,28 @@ r.table(&apos;b&apos;).reconfigure(shards=2, replicas={&apos;us&apos;:2, &apos;l
 <h4 id="rethinkdb支持二级索引和复合索引吗？"><a href="#rethinkdb支持二级索引和复合索引吗？" class="headerlink" title="rethinkdb支持二级索引和复合索引吗？"></a>rethinkdb支持二级索引和复合索引吗？</h4><p>rethinkdb支持二级索引和复合索引，同时也支持任意意表达式形式的索引。可以参考如何创建二级索引的API here.</p>
 <h2 id="Availability-and-failover"><a href="#Availability-and-failover" class="headerlink" title="Availability and failover"></a>Availability and failover</h2><h4 id="当一个server不可用的时候会出现什么？"><a href="#当一个server不可用的时候会出现什么？" class="headerlink" title="当一个server不可用的时候会出现什么？"></a>当一个server不可用的时候会出现什么？</h4><p>如果一个集群至少有3个节点,大部分情况下rethinkdb会自动failover来确保表的可用性.<br>1.如果一个分片的主副本失效，只要每个分片的投票副本有超过一半可用，那么其中一个副本会成为新的主副本</p>
 <p>2.如果某个分片有一半或者超过一半的副本不可用(包括2个server的集群挂了1台)，这个集群必须通过reconfigure的emergency repair选项来进行人工修复。<br>更多的细节可以看Failover.</p>
+<h4 id="分片和副本对可用性和性能有什么影响？"><a href="#分片和副本对可用性和性能有什么影响？" class="headerlink" title="分片和副本对可用性和性能有什么影响？"></a>分片和副本对可用性和性能有什么影响？</h4><p>如果用户增加和减小副本的数量，rethinkdb仍保持可用性。在大部分情况下，副本的复制过程不会对实时系统有太多的影响<br>如果用户修改分片的数量，rethinkDB可能不一定会保持可用性，在大多数情况下，会保持可用性，但不是绝对。目前我们还在探索这个限制的解决方案。</p>
+<p>##Query execution</p>
+<h4 id="rethinkdb如何执行查询"><a href="#rethinkdb如何执行查询" class="headerlink" title="rethinkdb如何执行查询"></a>rethinkdb如何执行查询</h4><p>当一个集群的节点收到来自客户端的查询时，会用下面的方法进行评估：</p>
+<p>首先，查询会转换成执行计划，执行计划包含内部逻辑操作栈。这个操作栈使用一个数据结构充分的描述了查询的执行，对高效执行查询非常有帮助。栈底的节点通常是处理数据访问 － 可能只查找明确的一条文档记录，或者由索引定位到的小范围扫描，或者是全表扫描。栈顶的操作节点通常是数据的转换－映射value，数据剪裁，分组操作等。操作节点可能很简单 (返回一组文档子集) 或者很复杂，比如是子查询的整个栈。</p>
+<p>栈中的每个节点都由一组方法定义的。其中有三个重要的方法，分别定义 如何在集群中的每台服务器上执行查询，得到结果子集，如何从多台服务器上将子结果集合并到一个结果集，如何把数据以块的形式传递给下一个处理节点。</p>
+<p>作为客户端尝试从服务器流式的拉数据，这些栈会传输到集群每个相关节点，通过并行的方式，每个server开始计算栈的顶端节点。每个server对应栈的顶端从下面的节点抓取第一个数据块，并且在上面进行转换。这个过程递归的进行直到足够的数据被收集后会发送第一个数据块给客户端。每个server产生的数据会合并成一个结果集，并且转发给客户端，客户端持从这个过程从服务器上请求更多的数据<br>两个重要的执行引擎的特性是每个查询都会完全在集群里并行化，查询会延迟评估。比如如果客户端只请求一个文档，rethinkdb会尝试做足够的工作来返回文档，从整体上看不会处理每个分片。这允许更大和更复杂的查询更有效的执行</p>
+<p>完整的查询执行过程是相当复杂和精细的。举个例子，一些操作不能被并行化，一些查询不能被延迟执行(隐含在运行时使用内存)，一些操作的实现可以被明显改进。我们在添加工具帮助可视化来实现让用户更好的理解查询执行，但是当前最好的方法是问我们或者看代码</p>
+<h4 id="原子模型是如何工作的？"><a href="#原子模型是如何工作的？" class="headerlink" title="原子模型是如何工作的？"></a>原子模型是如何工作的？</h4><p>原子写是建立在单个文档基础上的-更新一条JSON文档能够保证原子性。rethinkdb在原子文档更新方面与其他NOSQL系统不同：rethinkdb的原子更新操作不是限制在有限的一些操作上，而是任何对单条文档的组合更新操作都能保证原子性。比如，用户可能希望更新属性A为属性B和C的和，为树形D增加固定值，添加一个元素到属性E的数组里。所有的这些操作都能被一个更新操作原子的执行。</p>
+<p>不过rethinkdb对哪些操作能够原子地执行的确做了一些限制，不能被证明是确定的操作不能以原子的方式更新。目前通过执行JavaScript代码得到值，获取随机值，或者value值是子查询的结果(比如对一个文档一个属性的值增加另外一个文档的属性的值)不能被原子的执行。如果一个更新或替换查询不能被原子的执行，rethinkdb默认会抛异常。用户可以在客户端对更新操作设置flag，使这些操作以非原子的方式执行。注意非原子的操作仅在update和replace操作中涉及到函数（包括now()）才会被检测；非原子的insert操作不会抛出异常。<br>此外，像大部分nosql系统一样，rethinkdb不支持原子的更新多个文档。</p>
+<h4 id="并发的查询如何处理的？"><a href="#并发的查询如何处理的？" class="headerlink" title="并发的查询如何处理的？"></a>并发的查询如何处理的？</h4><p>为了高效的执行并发的query，rethinkdb实现了block-level的MVCC。当有读操作正在执行时发生了写操作发生，rethinkdb为每个相关的分片做一个B-Tree的快照，临时维护不同版本的block，从而使读操作和写操作并发执行。对于构建在rethinkdb上的应用而言，rethinkdb是无锁的，用户可以在一个在线系统上执行小时级别的分析查询，而不会阻塞实时的读和写。</p>
+<p>当对多个文档进行写操作，且这些文档在B-tree中是挨着的，rethinkdb采用块级别的独占锁。如果竞争的块被缓存在内存中，锁存在的时间会非常短。如果块需要从磁盘加载，锁存在的时间会稍长。通常这存在性能问题，因为在B-Tree之上，所有经常被访问的block都会被缓存，所以大部分情况下写操作执行时本质上还是lock-free<br>并发的查询如何处理的？</p>
+<p>为了高效的执行并发的query，rethinkdb实现了block-level的MVCC。当有读操作正在执行时发生了写操作发生，rethinkdb为每个相关的分片做一个B-Tree的快照，临时维护不同版本的block，从而使读操作和写操作并发执行。对于构建在rethinkdb上的应用而言，rethinkdb是无锁的，用户可以在一个在线系统上执行小时级别的分析查询，而不会阻塞实时的读和写。</p>
+<p>当对多个文档进行写操作，且这些文档在B-tree中是挨着的，rethinkdb采用块级别的独占锁。如果竞争的块被缓存在内存中，锁存在的时间会非常短。如果块需要从磁盘加载，锁存在的时间会稍长。通常这存在性能问题，因为在B-Tree之上，所有经常被访问的block都会被缓存，所以大部分情况下写操作执行时本质上还是lock-free</p>
+<p>##Data storage</p>
+<h4 id="数据如何存储在磁盘上？"><a href="#数据如何存储在磁盘上？" class="headerlink" title="数据如何存储在磁盘上？"></a>数据如何存储在磁盘上？</h4><p>数据组织成B-Tree，且使用为rethinkdb定制的log-structured形式的存储引擎存储在磁盘上，这个存储引擎灵感来自BTRFS。这个存储引擎相比其他的存储引擎有很多优势，包括增量的且完全并发的垃圾压缩，低CPU开销和有效的多核操作，一些SSD优化，同时当电源故障后立即恢复，当故障时保证完全的数据一致性，支持MVCC<br>这个存储引擎结合定制的,B-Tree可感知的缓存引擎一起使用，这个缓存引擎允许文件的大小比可用内存的大小多很多数量级。rethinkdb可工作在10GB内存的和1TB的数据上</p>
+<h4 id="支持哪种文件系统？"><a href="#支持哪种文件系统？" class="headerlink" title="支持哪种文件系统？"></a>支持哪种文件系统？</h4><p>rethinkdb支持大部分常用的文件系统，可以选择支持direct io这种高效的方式，但是默认是不开启的</p>
+<h4 id="如何备份我的集群？"><a href="#如何备份我的集群？" class="headerlink" title="如何备份我的集群？"></a>如何备份我的集群？</h4><p>rethinkdb 通过一些简单的工具去做一个正在运行的集群热备份。更多细节参考 backup instructions</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/05/10/rethinkdb-architecture/" data-id="cio4gl70u0000fvas2lwdf84t" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2016/05/10/rethinkdb-architecture/" data-id="cio4hl5bp0001kiasz3nauqzn" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/architecture/">architecture</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nosql/">nosql</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rethinkdb/">rethinkdb</a></li></ul>
