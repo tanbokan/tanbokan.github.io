@@ -1,0 +1,504 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>rethinkdb架构-一致性保证 | bokan.me</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="tanbokan">
+    
+
+    
+    <meta name="description" content="原文: http://rethinkdb.com/docs/consistency/
+rethinkdb有三个设置配置用于控制一致性和持久性:  write acknowledgements， durability per table, and the query read mode
+设置
+write acknowledgements通过write_acks参数进行每个表的设置,可以通过confi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="rethinkdb架构-一致性保证">
+<meta property="og:url" content="tanbokan.github.io/2016/05/16/rethinkdb-architecture-2/index.html">
+<meta property="og:site_name" content="bokan.me">
+<meta property="og:description" content="原文: http://rethinkdb.com/docs/consistency/
+rethinkdb有三个设置配置用于控制一致性和持久性:  write acknowledgements， durability per table, and the query read mode
+设置
+write acknowledgements通过write_acks参数进行每个表的设置,可以通过confi">
+<meta property="og:updated_time" content="2016-05-16T08:48:14.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="rethinkdb架构-一致性保证">
+<meta name="twitter:description" content="原文: http://rethinkdb.com/docs/consistency/
+rethinkdb有三个设置配置用于控制一致性和持久性:  write acknowledgements， durability per table, and the query read mode
+设置
+write acknowledgements通过write_acks参数进行每个表的设置,可以通过confi">
+
+    
+    <link rel="alternative" href="/atom.xml" title="bokan.me" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="bokan.me" title="bokan.me"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="bokan.me">bokan.me</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search" />
+						<input type="hidden" name="q" value="site:tanbokan.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/05/16/rethinkdb-architecture-2/" title="rethinkdb架构-一致性保证" itemprop="url">rethinkdb架构-一致性保证</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="tanbokan" target="_blank" itemprop="author">tanbokan</a>
+		
+  <p class="article-time">
+    <time datetime="2016-05-16T07:46:17.000Z" itemprop="datePublished"> Published 2016-05-16</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#设置"><span class="toc-number">1.</span> <span class="toc-text">设置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#顺序和原子性保证"><span class="toc-number">2.</span> <span class="toc-text">顺序和原子性保证</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#可用性担保"><span class="toc-number">3.</span> <span class="toc-text">可用性担保</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#平衡安全性和性能"><span class="toc-number">4.</span> <span class="toc-text">平衡安全性和性能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#注意"><span class="toc-number">5.</span> <span class="toc-text">注意</span></a></li></ol>
+		
+		</div>
+		
+		<p>原文: <a href="http://rethinkdb.com/docs/consistency/" target="_blank" rel="external">http://rethinkdb.com/docs/consistency/</a></p>
+<p>rethinkdb有三个设置配置用于控制一致性和持久性:  write acknowledgements， durability per table, and the query read mode</p>
+<h2 id="设置"><a href="#设置" class="headerlink" title="设置"></a>设置</h2><ol>
+<li><strong>write acknowledgements</strong>通过write_acks参数进行每个表的设置,可以通过<a href="http://rethinkdb.com/api/javascript/config/" target="_blank" rel="external">config</a>命令或者修改table_config<a href="http://rethinkdb.com/docs/system-tables/" target="_blank" rel="external">系统表</a>。默认的模式是majority，意味着写操作需要大多数voting replica 确认它们已经写完才会被确认。另外一个模式时single，意味着写入只需要一个replica确认就会被确认</li>
+</ol>
+<p>2.<strong>Durability</strong>通过参数durability对每个表配置，通过reconfigure或者修改系统的table_config表。在hard durability模式下，写入需要提交到磁盘之后才被确认。在soft模式下，写会写入到内存之后立刻被确认。soft模式非常快但当故障时稍微欠缺恢复能力。默认的模式是hard</p>
+<p>3.每个query通过可选参数<strong>read_mode</strong>进行查询<a href="http://rethinkdb.com/api/javascript/table/" target="_blank" rel="external">表</a>的设置.有三种可能的选项:<br>    single: 返回主副本内存里的数据(可能不一定写到磁盘上)，这是默认的<br>    majority: 只会返回大部分副本已经写入到磁盘的值。这要求每个读操作都需要发送一个消息到每个副本上，所以这可能是最慢的但是最强的一致性<br>    outdated: 会返回任意挑选的副本里内存的数据。这个是最快但是最弱的一致性</p>
+<p>注意<a href="http://rethinkdb.com/docs/changefeeds/javascript/" target="_blank" rel="external">change feeds</a>会忽略read_mode标记，它总是会切换成single模式下</p>
+<h2 id="顺序和原子性保证"><a href="#顺序和原子性保证" class="headerlink" title="顺序和原子性保证"></a>顺序和原子性保证</h2><p>使用下面的设置，rethinkdb保证在单个文档的单个原子操作的顺序性：</p>
+<pre><code>write_acks:majority
+
+durability:hard
+
+read_mode:majority
+</code></pre><p>这意味着每次读会看到之前成功的写的数据，并且读不到最后失败的写的数据(可以看之前的definitively failed vs. indeterminate writes)</p>
+<p>顺序性的是保证原子操作而不是查询。一个rethinkdb的single query不一定执行一条原子操作。它可能是这种query：</p>
+<pre><code>r.table(&quot;foo&quot;).get(&quot;bar&quot;).eq(r.table(&quot;foo&quot;).get(&quot;bar&quot;))
+    .run(conn, callback);
+</code></pre><p>可能返回false！ 每个单独的<a href="http://rethinkdb.com/api/javascript/get/" target="_blank" rel="external">get</a>操作是原子的，但是整体看query不是。为了在一个原子操作里读和修改一个文档，可以使用<a href="http://rethinkdb.com/api/javascript/update/" target="_blank" rel="external">update</a>和<a href="http://rethinkdb.com/api/javascript/replace/" target="_blank" rel="external">replace</a>命</p>
+<pre><code>r.table(&quot;foo&quot;).get(id).update({hits: r.row(&quot;hits&quot;) + 1})
+    .run(conn, callback);
+</code></pre><p>这个也可以个用来实现check-and-set寄存器.下面的query将会原子的检查check属性是不是等于old_value并修改成new_value:</p>
+<pre><code>r.table(&quot;foo&quot;).get(register_id).update({check:
+ r.branch(r.row(&quot;check&quot;).eq(old_value), new_value, r.row(&quot;check&quot;)) })
+    .run(conn, callback);
+</code></pre><p>rethinkdb操作永远不会在多个key上保证是原子的.正是这个原因，rethinkdb不能被认为是ACID数据库</p>
+<p>现在filter和get_all是类似的操作操作，当结合update等转换操作时。<br>因此下面不是一个正确的check-and-set register实现，因此filter和update不会在一个原子操作执行。</p>
+<pre><code>r.table(&quot;foo&quot;).filter({ id: register_id, foo: old_val
+    }).update({foo: new_val}).run(conn, callback);
+table.filter({id: register_id, foo: old_val}).update({foo: new_val})
+</code></pre><h2 id="可用性担保"><a href="#可用性担保" class="headerlink" title="可用性担保"></a>可用性担保</h2><p>这些可能在以后会改变，可以讨论和跟踪 <a href="https://github.com/rethinkdb/rethinkdb/issues/3992/" target="_blank" rel="external">Github issue #3992</a> .<br>除了短暂的时期，一个表依旧会保持完全可用当每个分区有超过一半的副本。如果一个分片有超过一半的副本连不上，对这个分片的读和写操作会失败。</p>
+<p>重新设置表(修改分片数量，重新平衡等)引起短暂的不可用性在重新设置的不同的时间点。</p>
+<p>如果主副本丢失但是超过一半的副本依然可用，任意一个副本可能会被选为primary. 新的主副本会显示在table_status里，但是table_config的primary_replica属性不会改变。如果旧的主副本变的重新可用之后，系统将会切换回来。当主在切换时会有短暂时间的不可用。</p>
+<p>如果一个分片超过一半的副本丢失了，恢复可用性的唯一的做法是执行<a href="http://rethinkdb.com/api/javascript/reconfigure" target="_blank" rel="external">reconfigure</a>的emergency_repair选项。更多细节可以查阅reconfigure的文档.</p>
+<p>即使表不可用了，在single的模式下读可能会成功，但是这个并不保证。在outdated模式下只要每个相关的分片都至少有一个副本就能保证读操作可以成功。</p>
+<blockquote>
+<p>Voting and non-voting?<br>所有的副本默认是是voting replicas，意味着当需要majority以上副本可用时，他们可以算在内。然后，哪个副本是vote replica是受网络延迟影响的。如果你有一个很远，延迟高的数据中心，你可能会设置它的副本是non-voting来提高性能，来保证该数据中心内保持可用性。你通过reconfigure设置一个副本为non-voting</p>
+</blockquote>
+<h2 id="平衡安全性和性能"><a href="#平衡安全性和性能" class="headerlink" title="平衡安全性和性能"></a>平衡安全性和性能</h2><p>rethinkdb默认的设置优先安全性而不是性能，除了下面的情况: read_mode默认是singles而不是majority. majority read模式需要发送一个请求道所有的副本，并等待大部分回复，这会明显的降低性能。</p>
+<p>在一个普通操作中，single read模式产生的结果和majority read的结果一样，但是可能返回过期的数据当遇到一个网络故障或者崩溃。也可能一个single read返回一会需要回滚的未完成的写的数据。</p>
+<p>在single write和soft持久性模式下，对比majority和hard模式，正常的操作得到一样的结果，但是当网络和服务器故障时，最近写入的数据可能会丢失。</p>
+<p>注意write_acks和durability不能影响写入如何执行，他们只能影响什么时候给客户端的的请求回ack。</p>
+<p>在outdated读模式下读操作可能返回过期的数据，即使是正常的操作，但是数据通常只过期很短的时间。当网络或者服务故障时，数据可能过期的更久。outdated读模式的优势是延迟和吞吐会比single模式更好，除此之外可用性的不同在之前的章节描述过了。</p>
+<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>在一个表上使用emergency_repair可能会作废所有的保证。</p>
+<p>有两种写操作失败的情况。如果一个写最后失败了，即使在较弱的读模式下，也没有读将要看到它。如果不确定它失败了，在single和outdated模式下都可能看到，但是当网络故障或者崩溃硬气的问题恢复或者回滚这个写数据。通常，不确定写入失败精确地出现在在网络或者服务第一次出现问题的时间点上，这些故障都会产生错误，你可以检查错误信息来看是否这个错误被定义。</p>
+<p>rethinkdb的自动failover在非传递的网络连接故障下是受限的，比如serverA可以连B,B可以连C，但是A不能连C。可以详细阅读<a href="http://rethinkdb.com/docs/failover/" target="_blank" rel="external">Failover</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/rethinkdb/">rethinkdb</a><a href="/tags/nosql/">nosql</a><a href="/tags/架构/">架构</a><a href="/tags/翻译/">翻译</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="tanbokan.github.io/2016/05/16/rethinkdb-architecture-2/" data-title="rethinkdb架构-一致性保证 | bokan.me" data-tsina="undefined" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2016/05/10/rethinkdb-architecture/"  title="rethinkdb架构细节">
+ <strong>下一篇：</strong><br/> 
+ <span>rethinkdb架构细节
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/05/16/rethinkdb-architecture-2/" data-title="rethinkdb架构-一致性保证" data-url="tanbokan.github.io/2016/05/16/rethinkdb-architecture-2/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#设置"><span class="toc-number">1.</span> <span class="toc-text">设置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#顺序和原子性保证"><span class="toc-number">2.</span> <span class="toc-text">顺序和原子性保证</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#可用性担保"><span class="toc-number">3.</span> <span class="toc-text">可用性担保</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#平衡安全性和性能"><span class="toc-number">4.</span> <span class="toc-text">平衡安全性和性能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#注意"><span class="toc-number">5.</span> <span class="toc-text">注意</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/rethinkdb/" title="rethinkdb">rethinkdb<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/nosql/" title="nosql">nosql<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/架构/" title="架构">架构<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/翻译/" title="翻译">翻译<sup>2</sup></a></li>
+			
+		
+			
+		
+			
+		
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">Links</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">Weibo</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=undefined&verifier=&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
+		
+		<a href="/about" target="_blank" title="tanbokan">tanbokan</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"tanbokan"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

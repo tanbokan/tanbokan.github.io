@@ -4,23 +4,26 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>rethinkdb architecture | bokan.me</title>
+    <title>rethinkdb架构细节 | bokan.me</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="tanbokan">
     
 
     
-    <meta name="description" content="Sharding and replicationrethinkdb如何对数据进行分片？rethinkdb使用表主键作为输入参数的范围切分算法对数据进行分片，当用户声明想对一个表切分成一定数量的分片，系统会根据这个表的统计信息找到最优的分裂点把表平均切分。所有的划分都是基于表的primary key来完成，不能做到基于其他属性的（在rethinkdb中 ，primary key和shard key实">
+    <meta name="description" content="原文: http://rethinkdb.com/docs/architecture/
+Sharding and replicationrethinkdb如何对数据进行分片？rethinkdb使用表主键作为输入参数的范围切分算法对数据进行分片，当用户声明想对一个表切分成一定数量的分片，系统会根据这个表的统计信息找到最优的分裂点把表平均切分。所有的划分都是基于表的primary key来完成，不能做">
 <meta property="og:type" content="article">
-<meta property="og:title" content="rethinkdb architecture">
+<meta property="og:title" content="rethinkdb架构细节">
 <meta property="og:url" content="tanbokan.github.io/2016/05/10/rethinkdb-architecture/index.html">
 <meta property="og:site_name" content="bokan.me">
-<meta property="og:description" content="Sharding and replicationrethinkdb如何对数据进行分片？rethinkdb使用表主键作为输入参数的范围切分算法对数据进行分片，当用户声明想对一个表切分成一定数量的分片，系统会根据这个表的统计信息找到最优的分裂点把表平均切分。所有的划分都是基于表的primary key来完成，不能做到基于其他属性的（在rethinkdb中 ，primary key和shard key实">
-<meta property="og:updated_time" content="2016-05-12T16:12:23.000Z">
+<meta property="og:description" content="原文: http://rethinkdb.com/docs/architecture/
+Sharding and replicationrethinkdb如何对数据进行分片？rethinkdb使用表主键作为输入参数的范围切分算法对数据进行分片，当用户声明想对一个表切分成一定数量的分片，系统会根据这个表的统计信息找到最优的分裂点把表平均切分。所有的划分都是基于表的primary key来完成，不能做">
+<meta property="og:updated_time" content="2016-05-16T08:51:00.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="rethinkdb architecture">
-<meta name="twitter:description" content="Sharding and replicationrethinkdb如何对数据进行分片？rethinkdb使用表主键作为输入参数的范围切分算法对数据进行分片，当用户声明想对一个表切分成一定数量的分片，系统会根据这个表的统计信息找到最优的分裂点把表平均切分。所有的划分都是基于表的primary key来完成，不能做到基于其他属性的（在rethinkdb中 ，primary key和shard key实">
+<meta name="twitter:title" content="rethinkdb架构细节">
+<meta name="twitter:description" content="原文: http://rethinkdb.com/docs/architecture/
+Sharding and replicationrethinkdb如何对数据进行分片？rethinkdb使用表主键作为输入参数的范围切分算法对数据进行分片，当用户声明想对一个表切分成一定数量的分片，系统会根据这个表的统计信息找到最优的分裂点把表平均切分。所有的划分都是基于表的primary key来完成，不能做">
 
     
     <link rel="alternative" href="/atom.xml" title="bokan.me" type="application/atom+xml">
@@ -80,7 +83,7 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2016/05/10/rethinkdb-architecture/" title="rethinkdb architecture" itemprop="url">rethinkdb architecture</a>
+      <a href="/2016/05/10/rethinkdb-architecture/" title="rethinkdb架构细节" itemprop="url">rethinkdb架构细节</a>
   </h1>
   <p class="article-author">By
        
@@ -100,7 +103,8 @@
 		
 		</div>
 		
-		<h2 id="Sharding-and-replication"><a href="#Sharding-and-replication" class="headerlink" title="Sharding and replication"></a>Sharding and replication</h2><h4 id="rethinkdb如何对数据进行分片？"><a href="#rethinkdb如何对数据进行分片？" class="headerlink" title="rethinkdb如何对数据进行分片？"></a>rethinkdb如何对数据进行分片？</h4><p>rethinkdb使用表主键作为输入参数的范围切分算法对数据进行分片，当用户声明想对一个表切分成一定数量的分片，系统会根据这个表的统计信息找到最优的分裂点把表平均切分。所有的划分都是基于表的primary key来完成，不能做到基于其他属性的（在rethinkdb中 ，primary key和shard key实际上是一回事）。</p>
+		<p>原文: <a href="http://rethinkdb.com/docs/architecture/" target="_blank" rel="external">http://rethinkdb.com/docs/architecture/</a></p>
+<h2 id="Sharding-and-replication"><a href="#Sharding-and-replication" class="headerlink" title="Sharding and replication"></a>Sharding and replication</h2><h4 id="rethinkdb如何对数据进行分片？"><a href="#rethinkdb如何对数据进行分片？" class="headerlink" title="rethinkdb如何对数据进行分片？"></a>rethinkdb如何对数据进行分片？</h4><p>rethinkdb使用表主键作为输入参数的范围切分算法对数据进行分片，当用户声明想对一个表切分成一定数量的分片，系统会根据这个表的统计信息找到最优的分裂点把表平均切分。所有的划分都是基于表的primary key来完成，不能做到基于其他属性的（在rethinkdb中 ，primary key和shard key实际上是一回事）。</p>
 <p>举个例子，如果一个表包含一千个json文档，它的primary key是均匀分布，字典序，大写的字符串，用户声明他们需要2个分片，rethinkdb将会挑选分裂点字母 ‘M’ 去切分这个表。每个文档如果primary key 小于等于 ‘M’将会进入第一个分片，如果primary key 大于 ‘M’ 将会进入第二个分片.分裂点的选择将会尽量让每个分片包含500个key，并且分片会自动分布到集群中。</p>
 <p>即使primary key包含不平均分布的数据(比如人名，有一些名字出现的次数比其他名字更多)，系统会挑选一个恰当的分裂点去保证每个分片有大致相同数量的的文档。</p>
 <p>当表创建分片之后分裂点不会自动修改，这意味着如果primary key变得分布不均匀，分片可能变的不均衡。不过，用户可以在需要的时候手动调整分片，还可以重新配置表的分片和副本集的设置，但用户不能手工设置分裂点。</p>
@@ -128,12 +132,12 @@ r.table(&apos;b&apos;).reconfigure(shards=2, replicas={&apos;us&apos;:2, &apos;l
 <p>在rethinkdb，如果存在网络分区，对某个客户端而言，系统的行为取决客户端在网络的哪个分区 。如果客户端在较多的选举的replica所在的网络分区中，操作不会有问题。如果客户端在小于等于一半选举的replica里，客户端up-to-date的查询和写操作都会遇到不可用问题。举个例子，如果客户端正在执行跨越多个分区的up-to-date的范围查询，所有的主分区必须和客户端在相同的网络分区内，否则客户端会遇到不可用性问题。</p>
 <p>如果程序员标记一个读操能够容忍out-of-date的数据，rethinkdb会将查询路由到到最近的可用副本而不是主副本。在这种情况下只要客户端所在的网络分区有副本，客户端就能读到数据，只是这种情况下数据可能是过期的数据，这通常对报表、数据分析、数据缓存或其他对数据是否最新没有特别高要求的情况是没什么问题。 </p>
 <h4 id="集群的配置是如何传播的？"><a href="#集群的配置是如何传播的？" class="headerlink" title="集群的配置是如何传播的？"></a>集群的配置是如何传播的？</h4><p>更新集群的状态在分布式系统里是个出奇困难的问题。在任意时间点，不同（可能）冲突的配置可能被网络的不同分区选择，不同的配置可能在不确定的时间到达不同的节点。</p>
-<p>通常情况下rethinkdb使用 raft算法去存储和传播集群的配置，虽然有一些场使用了semilattices<br>，内部时间戳版本。这种架构证明具有足够的精确性解决上述的所有问题</p>
+<p>通常情况下rethinkdb使用 <a href="https://en.wikipedia.org/wiki/Raft_(computer_science)" target="_blank" rel="external">Raft算法</a>去存储和传播集群的配置，虽然有一些场使用了semilattices<br>，内部时间戳版本。这种架构证明具有足够的精确性解决上述的所有问题</p>
 <h2 id="Indexing"><a href="#Indexing" class="headerlink" title="Indexing"></a>Indexing</h2><h4 id="rethinkdb如何索引数据？"><a href="#rethinkdb如何索引数据？" class="headerlink" title="rethinkdb如何索引数据？"></a>rethinkdb如何索引数据？</h4><p>当用户创建表的时候，可以指定哪个属性作为primary key(如果没有primary key，默认是”id”).当用户向表中插入一个文档，如果文档包含primary key，则它的值会被用来索引文档，否则，将自动为索引生成一个随机唯一id。</p>
 <p>rethinkdb根据每个文档的主键将文档放置到合适的分区，并在分区内建索引，索引使用B-Tree结构存储。通过主键查询文档非常高效，因为查询会立刻路由到对应的分区，同时在B-Tree上查找。</p>
-<h4 id="rethinkdb支持二级索引和复合索引吗？"><a href="#rethinkdb支持二级索引和复合索引吗？" class="headerlink" title="rethinkdb支持二级索引和复合索引吗？"></a>rethinkdb支持二级索引和复合索引吗？</h4><p>rethinkdb支持二级索引和复合索引，同时也支持任意意表达式形式的索引。可以参考如何创建二级索引的API here.</p>
+<h4 id="rethinkdb支持二级索引和复合索引吗？"><a href="#rethinkdb支持二级索引和复合索引吗？" class="headerlink" title="rethinkdb支持二级索引和复合索引吗？"></a>rethinkdb支持二级索引和复合索引吗？</h4><p>rethinkdb支持二级索引和复合索引，同时也支持任意意表达式形式的索引。可以参考如何创建二级索引的<a href="http://rethinkdb.com/docs/secondary-indexes/javascript/" target="_blank" rel="external">API</a>.</p>
 <h2 id="Availability-and-failover"><a href="#Availability-and-failover" class="headerlink" title="Availability and failover"></a>Availability and failover</h2><h4 id="当一个server不可用的时候会出现什么？"><a href="#当一个server不可用的时候会出现什么？" class="headerlink" title="当一个server不可用的时候会出现什么？"></a>当一个server不可用的时候会出现什么？</h4><p>如果一个集群至少有3个节点,大部分情况下rethinkdb会自动failover来确保表的可用性.<br>1.如果一个分片的主副本失效，只要每个分片的投票副本有超过一半可用，那么其中一个副本会成为新的主副本</p>
-<p>2.如果某个分片有一半或者超过一半的副本不可用(包括2个server的集群挂了1台)，这个集群必须通过reconfigure的emergency repair选项来进行人工修复。<br>更多的细节可以看Failover.</p>
+<p>2.如果某个分片有一半或者超过一半的副本不可用(包括2个server的集群挂了1台)，这个集群必须通过reconfigure的<a href="http://rethinkdb.com/api/javascript/reconfigure/#emergency-repair-mode" target="_blank" rel="external">emergency repair</a>选项来进行人工修复。<br>更多的细节可以看<a href="http://rethinkdb.com/docs/failover" target="_blank" rel="external">Failover</a>.</p>
 <h4 id="分片和副本对可用性和性能有什么影响？"><a href="#分片和副本对可用性和性能有什么影响？" class="headerlink" title="分片和副本对可用性和性能有什么影响？"></a>分片和副本对可用性和性能有什么影响？</h4><p>如果用户增加和减小副本的数量，rethinkdb仍保持可用性。在大部分情况下，副本的复制过程不会对实时系统有太多的影响<br>如果用户修改分片的数量，rethinkDB可能不一定会保持可用性，在大多数情况下，会保持可用性，但不是绝对。目前我们还在探索这个限制的解决方案。</p>
 <h2 id="Query-execution"><a href="#Query-execution" class="headerlink" title="Query execution"></a>Query execution</h2><h4 id="rethinkdb如何执行查询"><a href="#rethinkdb如何执行查询" class="headerlink" title="rethinkdb如何执行查询"></a>rethinkdb如何执行查询</h4><p>当一个集群的节点收到来自客户端的查询时，会用下面的方法进行评估：</p>
 <p>首先，查询会转换成执行计划，执行计划包含内部逻辑操作栈。这个操作栈使用一个数据结构充分的描述了查询的执行，对高效执行查询非常有帮助。栈底的节点通常是处理数据访问 － 可能只查找明确的一条文档记录，或者由索引定位到的小范围扫描，或者是全表扫描。栈顶的操作节点通常是数据的转换－映射value，数据剪裁，分组操作等。操作节点可能很简单 (返回一组文档子集) 或者很复杂，比如是子查询的整个栈。</p>
@@ -148,7 +152,7 @@ r.table(&apos;b&apos;).reconfigure(shards=2, replicas={&apos;us&apos;:2, &apos;l
 <p>当对多个文档进行写操作，且这些文档在B-tree中是挨着的，rethinkdb采用块级别的独占锁。如果竞争的块被缓存在内存中，锁存在的时间会非常短。如果块需要从磁盘加载，锁存在的时间会稍长。通常这存在性能问题，因为在B-Tree之上，所有经常被访问的block都会被缓存，所以大部分情况下写操作执行时本质上还是lock-free</p>
 <h2 id="Data-storage"><a href="#Data-storage" class="headerlink" title="Data storage"></a>Data storage</h2><h4 id="数据如何存储在磁盘上？"><a href="#数据如何存储在磁盘上？" class="headerlink" title="数据如何存储在磁盘上？"></a>数据如何存储在磁盘上？</h4><p>数据组织成B-Tree，且使用为rethinkdb定制的log-structured形式的存储引擎存储在磁盘上，这个存储引擎灵感来自BTRFS。这个存储引擎相比其他的存储引擎有很多优势，包括增量的且完全并发的垃圾压缩，低CPU开销和有效的多核操作，一些SSD优化，同时当电源故障后立即恢复，当故障时保证完全的数据一致性，支持MVCC<br>这个存储引擎结合定制的,B-Tree可感知的缓存引擎一起使用，这个缓存引擎允许文件的大小比可用内存的大小多很多数量级。rethinkdb可工作在10GB内存的和1TB的数据上</p>
 <h4 id="支持哪种文件系统？"><a href="#支持哪种文件系统？" class="headerlink" title="支持哪种文件系统？"></a>支持哪种文件系统？</h4><p>rethinkdb支持大部分常用的文件系统，可以选择支持direct io这种高效的方式，但是默认是不开启的</p>
-<h4 id="如何备份我的集群？"><a href="#如何备份我的集群？" class="headerlink" title="如何备份我的集群？"></a>如何备份我的集群？</h4><p>rethinkdb 通过一些简单的工具去做一个正在运行的集群热备份。更多细节参考 backup instructions</p>
+<h4 id="如何备份我的集群？"><a href="#如何备份我的集群？" class="headerlink" title="如何备份我的集群？"></a>如何备份我的集群？</h4><p>rethinkdb 通过一些简单的工具去做一个正在运行的集群热备份。更多细节参考<a href="http://rethinkdb.com/docs/backup/" target="_blank" rel="external">backup instructions</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -157,7 +161,7 @@ r.table(&apos;b&apos;).reconfigure(shards=2, replicas={&apos;us&apos;:2, &apos;l
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/rethinkdb/">rethinkdb</a><a href="/tags/nosql/">nosql</a><a href="/tags/architecture/">architecture</a>
+  <span></span> <a href="/tags/rethinkdb/">rethinkdb</a><a href="/tags/nosql/">nosql</a><a href="/tags/架构/">架构</a><a href="/tags/翻译/">翻译</a>
   </div>
 
 </div>
@@ -166,7 +170,7 @@ r.table(&apos;b&apos;).reconfigure(shards=2, replicas={&apos;us&apos;:2, &apos;l
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="tanbokan.github.io/2016/05/10/rethinkdb-architecture/" data-title="rethinkdb architecture | bokan.me" data-tsina="undefined" class="share clearfix">
+	  <div data-url="tanbokan.github.io/2016/05/10/rethinkdb-architecture/" data-title="rethinkdb架构细节 | bokan.me" data-tsina="undefined" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -177,9 +181,22 @@ r.table(&apos;b&apos;).reconfigure(shards=2, replicas={&apos;us&apos;:2, &apos;l
    	       
 	</article>
 	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/05/16/rethinkdb-architecture-2/" title="rethinkdb架构-一致性保证">
+  <strong>上一篇：</strong><br/>
+  <span>
+  rethinkdb架构-一致性保证</span>
+</a>
+</div>
+
+
+</nav>
+
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="2016/05/10/rethinkdb-architecture/" data-title="rethinkdb architecture" data-url="tanbokan.github.io/2016/05/10/rethinkdb-architecture/"></div>
+	<div class="ds-thread" data-thread-key="2016/05/10/rethinkdb-architecture/" data-title="rethinkdb架构细节" data-url="tanbokan.github.io/2016/05/10/rethinkdb-architecture/"></div>
 </section>
 
 
@@ -208,15 +225,25 @@ r.table(&apos;b&apos;).reconfigure(shards=2, replicas={&apos;us&apos;:2, &apos;l
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/rethinkdb/" title="rethinkdb">rethinkdb<sup>1</sup></a></li>
+				<li><a href="/tags/rethinkdb/" title="rethinkdb">rethinkdb<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/nosql/" title="nosql">nosql<sup>1</sup></a></li>
+				<li><a href="/tags/nosql/" title="nosql">nosql<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/architecture/" title="architecture">architecture<sup>1</sup></a></li>
+				<li><a href="/tags/架构/" title="架构">架构<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/翻译/" title="翻译">翻译<sup>2</sup></a></li>
+			
+		
+			
+		
+			
+		
 			
 		
 		</ul>
