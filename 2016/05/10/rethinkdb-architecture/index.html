@@ -1,11 +1,17 @@
-<!DOCTYPE html>
-<html>
+
+ <!DOCTYPE HTML>
+<html >
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   
-  <title>rethinkdb architecture | Hexo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Sharding and replicationrethinkdb如何对数据进行分片？rethinkdb使用表主键作为输入参数的范围切分算法对数据进行分片，当用户声明想对一个表切分成一定数量的分片，系统会根据这个表的统计信息找到最优的分裂点把表平均切分。所有的划分都是基于表的primary key来完成，不能做到基于其他属性的（在rethinkdb中 ，primary key和shard key实">
+    <title>rethinkdb architecture | Hexo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="John Doe">
+    
+
+    
+    <meta name="description" content="Sharding and replicationrethinkdb如何对数据进行分片？rethinkdb使用表主键作为输入参数的范围切分算法对数据进行分片，当用户声明想对一个表切分成一定数量的分片，系统会根据这个表的统计信息找到最优的分裂点把表平均切分。所有的划分都是基于表的primary key来完成，不能做到基于其他属性的（在rethinkdb中 ，primary key和shard key实">
 <meta property="og:type" content="article">
 <meta property="og:title" content="rethinkdb architecture">
 <meta property="og:url" content="tanbokan.github.io/2016/05/10/rethinkdb-architecture/index.html">
@@ -15,77 +21,86 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="rethinkdb architecture">
 <meta name="twitter:description" content="Sharding and replicationrethinkdb如何对数据进行分片？rethinkdb使用表主键作为输入参数的范围切分算法对数据进行分片，当用户声明想对一个表切分成一定数量的分片，系统会根据这个表的统计信息找到最优的分裂点把表平均切分。所有的划分都是基于表的primary key来完成，不能做到基于其他属性的（在rethinkdb中 ，primary key和shard key实">
-  
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-  
-  
-    <link rel="icon" href="/favicon.png">
-  
-  
-    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
-  
-  <link rel="stylesheet" href="/css/style.css">
-  
 
+    
+    <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
-      </h1>
+  <body>
+    <header>
       
-    </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"></a>
-        
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="Flux RSS"></a>
-        
-        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="tanbokan.github.io"></form>
-      </div>
-    </div>
-  </div>
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="Hexo" title="Hexo"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Hexo">Hexo</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search" />
+						<input type="hidden" name="q" value="site:tanbokan.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/05/10/rethinkdb-architecture/" title="rethinkdb architecture" itemprop="url">rethinkdb architecture</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="John Doe" target="_blank" itemprop="author">John Doe</a>
+		
+  <p class="article-time">
+    <time datetime="2016-05-10T14:27:51.000Z" itemprop="datePublished"> Published 2016-05-10</time>
+    
+  </p>
 </header>
-      <div class="outer">
-        <section id="main"><article id="post-rethinkdb-architecture" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/05/10/rethinkdb-architecture/" class="article-date">
-  <time datetime="2016-05-10T14:27:51.000Z" itemprop="datePublished">2016-05-10</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="article-title" itemprop="name">
-      rethinkdb architecture
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="Sharding-and-replication"><a href="#Sharding-and-replication" class="headerlink" title="Sharding and replication"></a>Sharding and replication</h2><h4 id="rethinkdb如何对数据进行分片？"><a href="#rethinkdb如何对数据进行分片？" class="headerlink" title="rethinkdb如何对数据进行分片？"></a>rethinkdb如何对数据进行分片？</h4><p>rethinkdb使用表主键作为输入参数的范围切分算法对数据进行分片，当用户声明想对一个表切分成一定数量的分片，系统会根据这个表的统计信息找到最优的分裂点把表平均切分。所有的划分都是基于表的primary key来完成，不能做到基于其他属性的（在rethinkdb中 ，primary key和shard key实际上是一回事）。</p>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Sharding-and-replication"><span class="toc-number">1.</span> <span class="toc-text">Sharding and replication</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#rethinkdb如何对数据进行分片？"><span class="toc-number">1.0.1.</span> <span class="toc-text">rethinkdb如何对数据进行分片？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#集群中分片和副本集的位置是如何保证的？"><span class="toc-number">1.0.2.</span> <span class="toc-text">集群中分片和副本集的位置是如何保证的？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#如何支持多机房工作？"><span class="toc-number">1.0.3.</span> <span class="toc-text">如何支持多机房工作？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#在没有用户的请求下rethinkdb会自动对数据库重新分区吗？"><span class="toc-number">1.0.4.</span> <span class="toc-text">在没有用户的请求下rethinkdb会自动对数据库重新分区吗？</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CAP-theorem"><span class="toc-number">2.</span> <span class="toc-text">CAP theorem</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#rethinkdb是immediately还是eventually-一致性？"><span class="toc-number">2.0.1.</span> <span class="toc-text">rethinkdb是immediately还是eventually 一致性？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#rethinkdb是如何权衡cap理论？"><span class="toc-number">2.0.2.</span> <span class="toc-text">rethinkdb是如何权衡cap理论？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#集群的配置是如何传播的？"><span class="toc-number">2.0.3.</span> <span class="toc-text">集群的配置是如何传播的？</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Indexing"><span class="toc-number">3.</span> <span class="toc-text">Indexing</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#rethinkdb如何索引数据？"><span class="toc-number">3.0.1.</span> <span class="toc-text">rethinkdb如何索引数据？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#rethinkdb支持二级索引和复合索引吗？"><span class="toc-number">3.0.2.</span> <span class="toc-text">rethinkdb支持二级索引和复合索引吗？</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Availability-and-failover"><span class="toc-number">4.</span> <span class="toc-text">Availability and failover</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#当一个server不可用的时候会出现什么？"><span class="toc-number">4.0.1.</span> <span class="toc-text">当一个server不可用的时候会出现什么？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#分片和副本对可用性和性能有什么影响？"><span class="toc-number">4.0.2.</span> <span class="toc-text">分片和副本对可用性和性能有什么影响？</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Query-execution"><span class="toc-number">5.</span> <span class="toc-text">Query execution</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#rethinkdb如何执行查询"><span class="toc-number">5.0.1.</span> <span class="toc-text">rethinkdb如何执行查询</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#原子模型是如何工作的？"><span class="toc-number">5.0.2.</span> <span class="toc-text">原子模型是如何工作的？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#并发的查询如何处理的？"><span class="toc-number">5.0.3.</span> <span class="toc-text">并发的查询如何处理的？</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Data-storage"><span class="toc-number">6.</span> <span class="toc-text">Data storage</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#数据如何存储在磁盘上？"><span class="toc-number">6.0.1.</span> <span class="toc-text">数据如何存储在磁盘上？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#支持哪种文件系统？"><span class="toc-number">6.0.2.</span> <span class="toc-text">支持哪种文件系统？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#如何备份我的集群？"><span class="toc-number">6.0.3.</span> <span class="toc-text">如何备份我的集群？</span></a></li></ol></li></ol></li></ol>
+		
+		</div>
+		
+		<h2 id="Sharding-and-replication"><a href="#Sharding-and-replication" class="headerlink" title="Sharding and replication"></a>Sharding and replication</h2><h4 id="rethinkdb如何对数据进行分片？"><a href="#rethinkdb如何对数据进行分片？" class="headerlink" title="rethinkdb如何对数据进行分片？"></a>rethinkdb如何对数据进行分片？</h4><p>rethinkdb使用表主键作为输入参数的范围切分算法对数据进行分片，当用户声明想对一个表切分成一定数量的分片，系统会根据这个表的统计信息找到最优的分裂点把表平均切分。所有的划分都是基于表的primary key来完成，不能做到基于其他属性的（在rethinkdb中 ，primary key和shard key实际上是一回事）。</p>
 <p>举个例子，如果一个表包含一千个json文档，它的primary key是均匀分布，字典序，大写的字符串，用户声明他们需要2个分片，rethinkdb将会挑选分裂点字母 ‘M’ 去切分这个表。每个文档如果primary key 小于等于 ‘M’将会进入第一个分片，如果primary key 大于 ‘M’ 将会进入第二个分片.分裂点的选择将会尽量让每个分片包含500个key，并且分片会自动分布到集群中。</p>
 <p>即使primary key包含不平均分布的数据(比如人名，有一些名字出现的次数比其他名字更多)，系统会挑选一个恰当的分裂点去保证每个分片有大致相同数量的的文档。</p>
 <p>当表创建分片之后分裂点不会自动修改，这意味着如果primary key变得分布不均匀，分片可能变的不均衡。不过，用户可以在需要的时候手动调整分片，还可以重新配置表的分片和副本集的设置，但用户不能手工设置分裂点。</p>
@@ -134,104 +149,345 @@ r.table(&apos;b&apos;).reconfigure(shards=2, replicas={&apos;us&apos;:2, &apos;l
 <h2 id="Data-storage"><a href="#Data-storage" class="headerlink" title="Data storage"></a>Data storage</h2><h4 id="数据如何存储在磁盘上？"><a href="#数据如何存储在磁盘上？" class="headerlink" title="数据如何存储在磁盘上？"></a>数据如何存储在磁盘上？</h4><p>数据组织成B-Tree，且使用为rethinkdb定制的log-structured形式的存储引擎存储在磁盘上，这个存储引擎灵感来自BTRFS。这个存储引擎相比其他的存储引擎有很多优势，包括增量的且完全并发的垃圾压缩，低CPU开销和有效的多核操作，一些SSD优化，同时当电源故障后立即恢复，当故障时保证完全的数据一致性，支持MVCC<br>这个存储引擎结合定制的,B-Tree可感知的缓存引擎一起使用，这个缓存引擎允许文件的大小比可用内存的大小多很多数量级。rethinkdb可工作在10GB内存的和1TB的数据上</p>
 <h4 id="支持哪种文件系统？"><a href="#支持哪种文件系统？" class="headerlink" title="支持哪种文件系统？"></a>支持哪种文件系统？</h4><p>rethinkdb支持大部分常用的文件系统，可以选择支持direct io这种高效的方式，但是默认是不开启的</p>
 <h4 id="如何备份我的集群？"><a href="#如何备份我的集群？" class="headerlink" title="如何备份我的集群？"></a>如何备份我的集群？</h4><p>rethinkdb 通过一些简单的工具去做一个正在运行的集群热备份。更多细节参考 backup instructions</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="tanbokan.github.io/2016/05/10/rethinkdb-architecture/" data-id="cio4ibl7u0000r4as8fca0ura" class="article-share-link">Partager</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/architecture/">architecture</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nosql/">nosql</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rethinkdb/">rethinkdb</a></li></ul>
-
-    </footer>
-  </div>
   
-    
-  
-</article>
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
 
-</section>
-        
-          <aside id="sidebar">
-  
-    
 
+  <div class="article-tags">
   
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Mot-clés</h3>
-    <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/architecture/">architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nosql/">nosql</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rethinkdb/">rethinkdb</a></li></ul>
-    </div>
+  <span></span> <a href="/tags/rethinkdb/">rethinkdb</a><a href="/tags/nosql/">nosql</a><a href="/tags/architecture/">architecture</a>
   </div>
 
+</div>
 
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Nuage de mot-clés</h3>
-    <div class="widget tagcloud">
-      <a href="/tags/architecture/" style="font-size: 10px;">architecture</a> <a href="/tags/nosql/" style="font-size: 10px;">nosql</a> <a href="/tags/rethinkdb/" style="font-size: 10px;">rethinkdb</a>
-    </div>
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="tanbokan.github.io/2016/05/10/rethinkdb-architecture/" data-title="rethinkdb architecture | Hexo" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Sharding-and-replication"><span class="toc-number">1.</span> <span class="toc-text">Sharding and replication</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#rethinkdb如何对数据进行分片？"><span class="toc-number">1.0.1.</span> <span class="toc-text">rethinkdb如何对数据进行分片？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#集群中分片和副本集的位置是如何保证的？"><span class="toc-number">1.0.2.</span> <span class="toc-text">集群中分片和副本集的位置是如何保证的？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#如何支持多机房工作？"><span class="toc-number">1.0.3.</span> <span class="toc-text">如何支持多机房工作？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#在没有用户的请求下rethinkdb会自动对数据库重新分区吗？"><span class="toc-number">1.0.4.</span> <span class="toc-text">在没有用户的请求下rethinkdb会自动对数据库重新分区吗？</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CAP-theorem"><span class="toc-number">2.</span> <span class="toc-text">CAP theorem</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#rethinkdb是immediately还是eventually-一致性？"><span class="toc-number">2.0.1.</span> <span class="toc-text">rethinkdb是immediately还是eventually 一致性？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#rethinkdb是如何权衡cap理论？"><span class="toc-number">2.0.2.</span> <span class="toc-text">rethinkdb是如何权衡cap理论？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#集群的配置是如何传播的？"><span class="toc-number">2.0.3.</span> <span class="toc-text">集群的配置是如何传播的？</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Indexing"><span class="toc-number">3.</span> <span class="toc-text">Indexing</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#rethinkdb如何索引数据？"><span class="toc-number">3.0.1.</span> <span class="toc-text">rethinkdb如何索引数据？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#rethinkdb支持二级索引和复合索引吗？"><span class="toc-number">3.0.2.</span> <span class="toc-text">rethinkdb支持二级索引和复合索引吗？</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Availability-and-failover"><span class="toc-number">4.</span> <span class="toc-text">Availability and failover</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#当一个server不可用的时候会出现什么？"><span class="toc-number">4.0.1.</span> <span class="toc-text">当一个server不可用的时候会出现什么？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#分片和副本对可用性和性能有什么影响？"><span class="toc-number">4.0.2.</span> <span class="toc-text">分片和副本对可用性和性能有什么影响？</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Query-execution"><span class="toc-number">5.</span> <span class="toc-text">Query execution</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#rethinkdb如何执行查询"><span class="toc-number">5.0.1.</span> <span class="toc-text">rethinkdb如何执行查询</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#原子模型是如何工作的？"><span class="toc-number">5.0.2.</span> <span class="toc-text">原子模型是如何工作的？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#并发的查询如何处理的？"><span class="toc-number">5.0.3.</span> <span class="toc-text">并发的查询如何处理的？</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Data-storage"><span class="toc-number">6.</span> <span class="toc-text">Data storage</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#数据如何存储在磁盘上？"><span class="toc-number">6.0.1.</span> <span class="toc-text">数据如何存储在磁盘上？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#支持哪种文件系统？"><span class="toc-number">6.0.2.</span> <span class="toc-text">支持哪种文件系统？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#如何备份我的集群？"><span class="toc-number">6.0.3.</span> <span class="toc-text">如何备份我的集群？</span></a></li></ol></li></ol></li></ol>
+ 
   </div>
 
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
   
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li></ul>
-    </div>
-  </div>
 
 
   
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Articles récents</h3>
-    <div class="widget">
-      <ul>
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/rethinkdb/" title="rethinkdb">rethinkdb<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/nosql/" title="nosql">nosql<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/architecture/" title="architecture">architecture<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">Links</p>
+    <ul>
         
           <li>
-            <a href="/2016/05/10/rethinkdb-architecture/">rethinkdb architecture</a>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
           </li>
         
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
         
-      </div>
-      <footer id="footer">
+    </ul>
+</div>
+
   
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      &copy; 2016 John Doe<br>
-      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">Weibo</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=null&verifier=b3593ceb&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
     </div>
-  </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m Larry Page in Google. <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/2176287895" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
+		
+		<a href="/about" target="_blank" title="John Doe">John Doe</a>
+		
+		
+		</p>
+</div>
 </footer>
-    </div>
-    <nav id="mobile-nav">
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
   
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
 
 
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
 
 
-<script src="/js/script.js"></script>
 
-  </div>
-</body>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
 </html>

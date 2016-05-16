@@ -1,11 +1,17 @@
-<!DOCTYPE html>
-<html>
+
+ <!DOCTYPE HTML>
+<html >
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   
-  <title>Hexo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description">
+    <title>Hexo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="John Doe">
+    
+
+    
+    <meta name="description">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Hexo">
 <meta property="og:url" content="tanbokan.github.io/index.html">
@@ -14,226 +20,307 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hexo">
 <meta name="twitter:description">
-  
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
-  
-  
-    <link rel="icon" href="/favicon.png">
-  
-  
-    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
-  
-  <link rel="stylesheet" href="/css/style.css">
-  
 
+    
+    <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
-      </h1>
+  <body>
+    <header>
       
-    </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"></a>
-        
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="Flux RSS"></a>
-        
-        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="tanbokan.github.io"></form>
-      </div>
-    </div>
-  </div>
-</header>
-      <div class="outer">
-        <section id="main">
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="Hexo" title="Hexo"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Hexo">Hexo</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search" />
+						<input type="hidden" name="q" value="site:tanbokan.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main">
+
   
-    <article id="post-rethinkdb-architecture" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/05/10/rethinkdb-architecture/" class="article-date">
-  <time datetime="2016-05-10T14:27:51.000Z" itemprop="datePublished">2016-05-10</time>
-</a>
+<section class="post" itemscope itemprop="blogitem">
+  
+    <a href="/2016/05/10/rethinkdb-architecture/" title="rethinkdb architecture" itemprop="url">
+  
+    <h1 itemprop="name">rethinkdb architecture</h1>
     
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
+     
+           <p itemprop="description" >Sharding and replicationrethinkdb如何对数据进行分片？rethinkdb使用表主键作为输入参数的范围切分算法对数据进行分片，当用户声明想对一个表切分成一定数量的分片，系统会根据这个表的统计信息找到最优的分裂点把表平均切分。所有的划分都是基于表的pr</p>
         
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/05/10/rethinkdb-architecture/">rethinkdb architecture</a>
-    </h1>
-  
-
-      </header>
     
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="Sharding-and-replication"><a href="#Sharding-and-replication" class="headerlink" title="Sharding and replication"></a>Sharding and replication</h2><h4 id="rethinkdb如何对数据进行分片？"><a href="#rethinkdb如何对数据进行分片？" class="headerlink" title="rethinkdb如何对数据进行分片？"></a>rethinkdb如何对数据进行分片？</h4><p>rethinkdb使用表主键作为输入参数的范围切分算法对数据进行分片，当用户声明想对一个表切分成一定数量的分片，系统会根据这个表的统计信息找到最优的分裂点把表平均切分。所有的划分都是基于表的primary key来完成，不能做到基于其他属性的（在rethinkdb中 ，primary key和shard key实际上是一回事）。</p>
-<p>举个例子，如果一个表包含一千个json文档，它的primary key是均匀分布，字典序，大写的字符串，用户声明他们需要2个分片，rethinkdb将会挑选分裂点字母 ‘M’ 去切分这个表。每个文档如果primary key 小于等于 ‘M’将会进入第一个分片，如果primary key 大于 ‘M’ 将会进入第二个分片.分裂点的选择将会尽量让每个分片包含500个key，并且分片会自动分布到集群中。</p>
-<p>即使primary key包含不平均分布的数据(比如人名，有一些名字出现的次数比其他名字更多)，系统会挑选一个恰当的分裂点去保证每个分片有大致相同数量的的文档。</p>
-<p>当表创建分片之后分裂点不会自动修改，这意味着如果primary key变得分布不均匀，分片可能变的不均衡。不过，用户可以在需要的时候手动调整分片，还可以重新配置表的分片和副本集的设置，但用户不能手工设置分裂点。</p>
-<p>这种机制的内部实现比常见的一致性hash更困难，但优势明显，因为它可以更高效的实现范围查询。</p>
-<h4 id="集群中分片和副本集的位置是如何保证的？"><a href="#集群中分片和副本集的位置是如何保证的？" class="headerlink" title="集群中分片和副本集的位置是如何保证的？"></a>集群中分片和副本集的位置是如何保证的？</h4><p>分片和副本可以通过table configurations进行配置，可以在一个数据库很简单的对一张表或者多张表配置分片和副本集数量.用户不需要手工关联表和服务器.rethinkdb使用一套探索式方法去尝试以最优的方式去满足表配置: 从可用的服务商位新的副本拷贝数据，在集群上均匀分布数据的副本，尽量平均的分配负载等。</p>
-<p>对于更细力度的机制，副本可以通过 server tags与server进行关联。每个server可以被分配一个或者多个tags，每个表可以有一定数量的副本关联到一个server的tag。举个例子，如果你有6台server，你可能对2台关联us_west的标签（tag），2台us_east标签，2个london标签，同时分配四台美国的服务器us标签。表可以通过reconfigure设置一组配置，用来对副本进行分组。</p>
-<pre><code>r.table(&apos;a&apos;).reconfigure(shards=2, replicas={&apos;us_east&apos;:2, &apos;us_west&apos;:2,
-    &apos;london&apos;:2}, primary_replica_tag=&apos;us_east&apos;)
-r.table(&apos;b&apos;).reconfigure(shards=2, replicas={&apos;us&apos;:2, &apos;london&apos;:1},
-    primary_replica_tag=&apos;london&apos;)
-</code></pre><p>在第二个例子里，us组里的2个副本可能在4台美国server中的任意server上。<br>需要注意的是server的tag不能通过rethinkdb的web管理界面进行配置，但可以通过ReQL命令和脚本进行创建和赋值。</p>
-<p>rethinkdb持有一个内部的目录用于跟踪集群的当前状态:目前多少server可用，每台server存储了什么数据等。这个数据结随着集群变化并自动更新。举个例子，如果一个机器因为电源故障挂了，这个目录也会更新去记录这一变化。</p>
-<h4 id="如何支持多机房工作？"><a href="#如何支持多机房工作？" class="headerlink" title="如何支持多机房工作？"></a>如何支持多机房工作？</h4><p>从rethinkdb 1.16开始，早期的”数据中心”的概念已经被上述提到的server tags 替换了。一个数据中心的所有server可能都被打上一个tag，比如us_east或us_west, 一张表可以配置成关联指定服务器标签的多个副本集（比如，2个副本集在打上us_east标签的服务器上，3个副本集在打上us_west标签的服务器上）。</p>
-<p>rethinkdb在一个机房和跨机房中使用相同的协议进行通讯，因为架构是 immediately consistent ，对单个文档的读写不需要quorums, rethinkdb不存在类似dynamo系统跨机房quorums所带来的延迟的问题。</p>
-<h4 id="在没有用户的请求下rethinkdb会自动对数据库重新分区吗？"><a href="#在没有用户的请求下rethinkdb会自动对数据库重新分区吗？" class="headerlink" title="在没有用户的请求下rethinkdb会自动对数据库重新分区吗？"></a>在没有用户的请求下rethinkdb会自动对数据库重新分区吗？</h4><p>答案是不会，这个集群系统设计遵循了三个重要原则：<br>1.通常的操作比如伸缩，重新切片，增加或减少副本集数量应该和容易被执行通过一个按钮点击<br>2.在一些重要的情况下，系统应该给管理员调整的权限，比如指定primary和secondary replica到特定的集群服务器上。<br>3.集群的信息和集群所有的操作应该是编程可见的。</p>
-<p>我们通常将集群上执行自动的维护操作(比如添加分片)看作high-level的组件，因此首先实现一个好的low-level组件就更为关键。所以这个集群系统由下面三层组成:<br>1.第一层实现了分布式基础组件:放置拷贝数据在指定的服务器上，路由查询等<br>2.第二层构建在第一层之上并且实现了多种自动化机制(自动分裂，数据拷贝放哪，自动挑选最佳primary replica)。<br>3.第三层构建在前两层之上，并且提供用户命令行和web工具去操作集群</p>
-<p>没有用户的请求就能够自动调用这些功能是下一层需要做的。目前用户可以通过web UI，手工操作命令行，编写脚本去调用命令行工具来实现操作自动化</p>
-<p>我们正在探索最佳实践尝试去构建一个通用的自动化层来控制集群，通过用户指定的规则来自动控制(比如当分片平衡性降到一定的阈值的时候需要重新切分)</p>
-<h2 id="CAP-theorem"><a href="#CAP-theorem" class="headerlink" title="CAP theorem"></a>CAP theorem</h2><h4 id="rethinkdb是immediately还是eventually-一致性？"><a href="#rethinkdb是immediately还是eventually-一致性？" class="headerlink" title="rethinkdb是immediately还是eventually 一致性？"></a>rethinkdb是immediately还是eventually 一致性？</h4><p>在rethinkdb的每个分片都会有一个primary replica。对某个key的所有读和写一定会路由到primary replica， 在 primary replica上key是有序且经过评估的。数据总是始终保持一致，并且没有冲突，在一个已返回ack的写操作之后的读操作能够保证读到最新的写入数据。然而，如果主副本不可用，读和写都不能保证成功。</p>
-<p>rethinkdb支持up-to-date和out-of-date 读。默认的所有的读都是up-to-date读，这意味着某个分片的读请求都会路由到主replica，且被顺序执行。在默认的模式下，客户端总是看到最新的，一致的， artifact-free的数据视图</p>
-<p>程序员也可以标记一个读操作能容忍读到out-of-date数据。在这个模式下，读请求不必路由到primary分片，而是可能会路由到最近的副本上。out-of-date查询拥有更低的延迟和更强的可用性，但是不一定会返回客户端数据最新的版本</p>
-<h4 id="rethinkdb是如何权衡cap理论？"><a href="#rethinkdb是如何权衡cap理论？" class="headerlink" title="rethinkdb是如何权衡cap理论？"></a>rethinkdb是如何权衡cap理论？</h4><p>cap理论暴露的最基本的权衡是:当网络分区时，系统保持可用性还是数据一致性?(rethinkdb选择了数据一致性)</p>
-<p>dynamo类似的系统比如cassandra和ciak选择了强可用性。在这些系统中如果出现网络分区，客户端可能往网络分区的两边都写入相同的key。对保证写可用性所付出的代价是，在这之上的应用必须处理多种复杂问题，比如clock skew， conflict resolution code， 冲突的修复操作，高并发下性能问题，基于quorums的latency问题</p>
-<p>比较知名的系统如rethinkdb和mongoldb选择了数据一致性。应用构建在这之上会更简单，因为所有由数据一致性导致的问题都不存在。代价是应用可能会偶尔出现不可用的问题</p>
-<p>在rethinkdb，如果存在网络分区，对某个客户端而言，系统的行为取决客户端在网络的哪个分区 。如果客户端在较多的选举的replica所在的网络分区中，操作不会有问题。如果客户端在小于等于一半选举的replica里，客户端up-to-date的查询和写操作都会遇到不可用问题。举个例子，如果客户端正在执行跨越多个分区的up-to-date的范围查询，所有的主分区必须和客户端在相同的网络分区内，否则客户端会遇到不可用性问题。</p>
-<p>如果程序员标记一个读操能够容忍out-of-date的数据，rethinkdb会将查询路由到到最近的可用副本而不是主副本。在这种情况下只要客户端所在的网络分区有副本，客户端就能读到数据，只是这种情况下数据可能是过期的数据，这通常对报表、数据分析、数据缓存或其他对数据是否最新没有特别高要求的情况是没什么问题。 </p>
-<h4 id="集群的配置是如何传播的？"><a href="#集群的配置是如何传播的？" class="headerlink" title="集群的配置是如何传播的？"></a>集群的配置是如何传播的？</h4><p>更新集群的状态在分布式系统里是个出奇困难的问题。在任意时间点，不同（可能）冲突的配置可能被网络的不同分区选择，不同的配置可能在不确定的时间到达不同的节点。</p>
-<p>通常情况下rethinkdb使用 raft算法去存储和传播集群的配置，虽然有一些场使用了semilattices<br>，内部时间戳版本。这种架构证明具有足够的精确性解决上述的所有问题</p>
-<h2 id="Indexing"><a href="#Indexing" class="headerlink" title="Indexing"></a>Indexing</h2><h4 id="rethinkdb如何索引数据？"><a href="#rethinkdb如何索引数据？" class="headerlink" title="rethinkdb如何索引数据？"></a>rethinkdb如何索引数据？</h4><p>当用户创建表的时候，可以指定哪个属性作为primary key(如果没有primary key，默认是”id”).当用户向表中插入一个文档，如果文档包含primary key，则它的值会被用来索引文档，否则，将自动为索引生成一个随机唯一id。</p>
-<p>rethinkdb根据每个文档的主键将文档放置到合适的分区，并在分区内建索引，索引使用B-Tree结构存储。通过主键查询文档非常高效，因为查询会立刻路由到对应的分区，同时在B-Tree上查找。</p>
-<h4 id="rethinkdb支持二级索引和复合索引吗？"><a href="#rethinkdb支持二级索引和复合索引吗？" class="headerlink" title="rethinkdb支持二级索引和复合索引吗？"></a>rethinkdb支持二级索引和复合索引吗？</h4><p>rethinkdb支持二级索引和复合索引，同时也支持任意意表达式形式的索引。可以参考如何创建二级索引的API here.</p>
-<h2 id="Availability-and-failover"><a href="#Availability-and-failover" class="headerlink" title="Availability and failover"></a>Availability and failover</h2><h4 id="当一个server不可用的时候会出现什么？"><a href="#当一个server不可用的时候会出现什么？" class="headerlink" title="当一个server不可用的时候会出现什么？"></a>当一个server不可用的时候会出现什么？</h4><p>如果一个集群至少有3个节点,大部分情况下rethinkdb会自动failover来确保表的可用性.<br>1.如果一个分片的主副本失效，只要每个分片的投票副本有超过一半可用，那么其中一个副本会成为新的主副本</p>
-<p>2.如果某个分片有一半或者超过一半的副本不可用(包括2个server的集群挂了1台)，这个集群必须通过reconfigure的emergency repair选项来进行人工修复。<br>更多的细节可以看Failover.</p>
-<h4 id="分片和副本对可用性和性能有什么影响？"><a href="#分片和副本对可用性和性能有什么影响？" class="headerlink" title="分片和副本对可用性和性能有什么影响？"></a>分片和副本对可用性和性能有什么影响？</h4><p>如果用户增加和减小副本的数量，rethinkdb仍保持可用性。在大部分情况下，副本的复制过程不会对实时系统有太多的影响<br>如果用户修改分片的数量，rethinkDB可能不一定会保持可用性，在大多数情况下，会保持可用性，但不是绝对。目前我们还在探索这个限制的解决方案。</p>
-<h2 id="Query-execution"><a href="#Query-execution" class="headerlink" title="Query execution"></a>Query execution</h2><h4 id="rethinkdb如何执行查询"><a href="#rethinkdb如何执行查询" class="headerlink" title="rethinkdb如何执行查询"></a>rethinkdb如何执行查询</h4><p>当一个集群的节点收到来自客户端的查询时，会用下面的方法进行评估：</p>
-<p>首先，查询会转换成执行计划，执行计划包含内部逻辑操作栈。这个操作栈使用一个数据结构充分的描述了查询的执行，对高效执行查询非常有帮助。栈底的节点通常是处理数据访问 － 可能只查找明确的一条文档记录，或者由索引定位到的小范围扫描，或者是全表扫描。栈顶的操作节点通常是数据的转换－映射value，数据剪裁，分组操作等。操作节点可能很简单 (返回一组文档子集) 或者很复杂，比如是子查询的整个栈。</p>
-<p>栈中的每个节点都由一组方法定义的。其中有三个重要的方法，分别定义 如何在集群中的每台服务器上执行查询，得到结果子集，如何从多台服务器上将子结果集合并到一个结果集，如何把数据以块的形式传递给下一个处理节点。</p>
-<p>作为客户端尝试从服务器流式的拉数据，这些栈会传输到集群每个相关节点，通过并行的方式，每个server开始计算栈的顶端节点。每个server对应栈的顶端从下面的节点抓取第一个数据块，并且在上面进行转换。这个过程递归的进行直到足够的数据被收集后会发送第一个数据块给客户端。每个server产生的数据会合并成一个结果集，并且转发给客户端，客户端持从这个过程从服务器上请求更多的数据<br>两个重要的执行引擎的特性是每个查询都会完全在集群里并行化，查询会延迟评估。比如如果客户端只请求一个文档，rethinkdb会尝试做足够的工作来返回文档，从整体上看不会处理每个分片。这允许更大和更复杂的查询更有效的执行</p>
-<p>完整的查询执行过程是相当复杂和精细的。举个例子，一些操作不能被并行化，一些查询不能被延迟执行(隐含在运行时使用内存)，一些操作的实现可以被明显改进。我们在添加工具帮助可视化来实现让用户更好的理解查询执行，但是当前最好的方法是问我们或者看代码</p>
-<h4 id="原子模型是如何工作的？"><a href="#原子模型是如何工作的？" class="headerlink" title="原子模型是如何工作的？"></a>原子模型是如何工作的？</h4><p>原子写是建立在单个文档基础上的-更新一条JSON文档能够保证原子性。rethinkdb在原子文档更新方面与其他NOSQL系统不同：rethinkdb的原子更新操作不是限制在有限的一些操作上，而是任何对单条文档的组合更新操作都能保证原子性。比如，用户可能希望更新属性A为属性B和C的和，为树形D增加固定值，添加一个元素到属性E的数组里。所有的这些操作都能被一个更新操作原子的执行。</p>
-<p>不过rethinkdb对哪些操作能够原子地执行的确做了一些限制，不能被证明是确定的操作不能以原子的方式更新。目前通过执行JavaScript代码得到值，获取随机值，或者value值是子查询的结果(比如对一个文档一个属性的值增加另外一个文档的属性的值)不能被原子的执行。如果一个更新或替换查询不能被原子的执行，rethinkdb默认会抛异常。用户可以在客户端对更新操作设置flag，使这些操作以非原子的方式执行。注意非原子的操作仅在update和replace操作中涉及到函数（包括now()）才会被检测；非原子的insert操作不会抛出异常。<br>此外，像大部分nosql系统一样，rethinkdb不支持原子的更新多个文档。</p>
-<h4 id="并发的查询如何处理的？"><a href="#并发的查询如何处理的？" class="headerlink" title="并发的查询如何处理的？"></a>并发的查询如何处理的？</h4><p>为了高效的执行并发的query，rethinkdb实现了block-level的MVCC。当有读操作正在执行时发生了写操作发生，rethinkdb为每个相关的分片做一个B-Tree的快照，临时维护不同版本的block，从而使读操作和写操作并发执行。对于构建在rethinkdb上的应用而言，rethinkdb是无锁的，用户可以在一个在线系统上执行小时级别的分析查询，而不会阻塞实时的读和写。</p>
-<p>当对多个文档进行写操作，且这些文档在B-tree中是挨着的，rethinkdb采用块级别的独占锁。如果竞争的块被缓存在内存中，锁存在的时间会非常短。如果块需要从磁盘加载，锁存在的时间会稍长。通常这存在性能问题，因为在B-Tree之上，所有经常被访问的block都会被缓存，所以大部分情况下写操作执行时本质上还是lock-free<br>并发的查询如何处理的？</p>
-<p>为了高效的执行并发的query，rethinkdb实现了block-level的MVCC。当有读操作正在执行时发生了写操作发生，rethinkdb为每个相关的分片做一个B-Tree的快照，临时维护不同版本的block，从而使读操作和写操作并发执行。对于构建在rethinkdb上的应用而言，rethinkdb是无锁的，用户可以在一个在线系统上执行小时级别的分析查询，而不会阻塞实时的读和写。</p>
-<p>当对多个文档进行写操作，且这些文档在B-tree中是挨着的，rethinkdb采用块级别的独占锁。如果竞争的块被缓存在内存中，锁存在的时间会非常短。如果块需要从磁盘加载，锁存在的时间会稍长。通常这存在性能问题，因为在B-Tree之上，所有经常被访问的block都会被缓存，所以大部分情况下写操作执行时本质上还是lock-free</p>
-<h2 id="Data-storage"><a href="#Data-storage" class="headerlink" title="Data storage"></a>Data storage</h2><h4 id="数据如何存储在磁盘上？"><a href="#数据如何存储在磁盘上？" class="headerlink" title="数据如何存储在磁盘上？"></a>数据如何存储在磁盘上？</h4><p>数据组织成B-Tree，且使用为rethinkdb定制的log-structured形式的存储引擎存储在磁盘上，这个存储引擎灵感来自BTRFS。这个存储引擎相比其他的存储引擎有很多优势，包括增量的且完全并发的垃圾压缩，低CPU开销和有效的多核操作，一些SSD优化，同时当电源故障后立即恢复，当故障时保证完全的数据一致性，支持MVCC<br>这个存储引擎结合定制的,B-Tree可感知的缓存引擎一起使用，这个缓存引擎允许文件的大小比可用内存的大小多很多数量级。rethinkdb可工作在10GB内存的和1TB的数据上</p>
-<h4 id="支持哪种文件系统？"><a href="#支持哪种文件系统？" class="headerlink" title="支持哪种文件系统？"></a>支持哪种文件系统？</h4><p>rethinkdb支持大部分常用的文件系统，可以选择支持direct io这种高效的方式，但是默认是不开启的</p>
-<h4 id="如何备份我的集群？"><a href="#如何备份我的集群？" class="headerlink" title="如何备份我的集群？"></a>如何备份我的集群？</h4><p>rethinkdb 通过一些简单的工具去做一个正在运行的集群热备份。更多细节参考 backup instructions</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="tanbokan.github.io/2016/05/10/rethinkdb-architecture/" data-id="cio4ibl7u0000r4as8fca0ura" class="article-share-link">Partager</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/architecture/">architecture</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nosql/">nosql</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rethinkdb/">rethinkdb</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-
+    <time datetime="2016-05-10T14:27:51.000Z" itemprop="datePublished">2016-05-10</time>
+  </a>
 </section>
-        
-          <aside id="sidebar">
-  
-    
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Mot-clés</h3>
-    <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/architecture/">architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nosql/">nosql</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rethinkdb/">rethinkdb</a></li></ul>
-    </div>
-  </div>
 
 
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Nuage de mot-clés</h3>
-    <div class="widget tagcloud">
-      <a href="/tags/architecture/" style="font-size: 10px;">architecture</a> <a href="/tags/nosql/" style="font-size: 10px;">nosql</a> <a href="/tags/rethinkdb/" style="font-size: 10px;">rethinkdb</a>
-    </div>
-  </div>
+
+
+
+
+
+</div>
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
 
   
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li></ul>
-    </div>
-  </div>
 
 
   
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Articles récents</h3>
-    <div class="widget">
-      <ul>
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/rethinkdb/" title="rethinkdb">rethinkdb<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/nosql/" title="nosql">nosql<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/architecture/" title="architecture">architecture<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">Links</p>
+    <ul>
         
           <li>
-            <a href="/2016/05/10/rethinkdb-architecture/">rethinkdb architecture</a>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
           </li>
         
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
         
-      </div>
-      <footer id="footer">
+    </ul>
+</div>
+
   
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      &copy; 2016 John Doe<br>
-      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">Weibo</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=null&verifier=b3593ceb&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
     </div>
-  </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m Larry Page in Google. <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/2176287895" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
+		
+		<a href="/about" target="_blank" title="John Doe">John Doe</a>
+		
+		
+		</p>
+</div>
 </footer>
-    </div>
-    <nav id="mobile-nav">
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
   
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
 
 
-<script src="/js/script.js"></script>
 
-  </div>
-</body>
-</html>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+ </html>
